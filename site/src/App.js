@@ -1,15 +1,19 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route }from 'react-router-dom';
-import Login from "./pages/login";
+import Signup from "./pages/signup";
 import Main from "./pages/main";
 
 
 const App = () => {
+
+    const apiUrl = "http://localhost:5000/"
+    const siteUrl = "http://localhost:3000/";
+
     return (
         <Router>
             <Routes>
-                <Route exact path="/" element={<Main/>}></Route>
-                <Route path="/login" element={<Login/>}></Route>
+                <Route path="/" element={<Main apiUrl={apiUrl} siteUrl={siteUrl}/>}></Route>
+                <Route path="/signup" element={<Signup apiUrl={apiUrl} siteUrl={siteUrl}/>}></Route>
             </Routes>
         </Router>
     );
