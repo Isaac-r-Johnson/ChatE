@@ -1,0 +1,1 @@
+This react-based site is an online private messaging service called ChatE; Its main purpose is to help me grow in learning and understanding how to build and operate react applications. If you have any suggestions on this project, please let me know. Thank you! :) -Isaac Johnson
