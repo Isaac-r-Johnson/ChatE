@@ -27,17 +27,26 @@ const Signup  = (props) => {
                 }
             })
         }
+        else{
+            alert("Please fill out all fields!")
+        }
     }
 
     return (
-        <div className="login-page">
+        <div className="login-page signup">
             <div className="login-form">
                 <h1>SignUp</h1>
                 <div className="form">
-                    <input onChange={event => UpdateFields(event, "usrn")} value={usrn} type="text" placeholder="Username" name="username"/>
-                    <input onChange={event => UpdateFields(event, "pass")} value={pass} type="password" placeholder="Password"  name="password"/>
-                    <button onClick={SendNewUser}>SignUp</button>
-                </div>
+                        <div className="input">
+                            <p>Username:</p>
+                            <input onChange={event => UpdateFields(event, "usrn")} value={usrn} type="text" placeholder='Type your username' name="username"/>
+                        </div>
+                        <div className="input" style={{'margin-top': '15px'}}>
+                            <p>Password:</p>
+                            <input onChange={event => UpdateFields(event, "pass")} value={pass} type="password" placeholder="Type your password"  name="password"/>
+                        </div>
+                        <button onClick={SendNewUser}>SignUp</button>
+                    </div>
             </div>
         </div>
     );

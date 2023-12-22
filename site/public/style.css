@@ -1,6 +1,7 @@
 /* Login Page */
 .login-page{
-    background-color: #3887BE;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(54,64,161,1) 54%, rgba(0,212,255,1) 100%);
     width: 100%;
     height: 100%;
     display: flex;
@@ -8,55 +9,91 @@
     align-items: center;
 }
 
+.signup{
+    background: rgb(2,0,36);
+    background: linear-gradient(-90deg, rgba(2,0,36,1) 0%, rgba(54,64,161,1) 54%, rgba(0,212,255,1) 100%)!important;
+}
+
 .login-form{
     width: 300px;
-    height: 325px;
-    background-color: #18082e;
+    height: 230px;
+    background-color: #e7e7e7;
+    border-radius: 5px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .login-form h1{
     padding-top: 10px;
-    color: #85c0ea;
+    color: black;
+    font-family: 'Roboto Mono', monospace;
 }
 
 .login-form .form{
     width: 100%;
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
-.login-form .form > input{
-    margin: 10px;
-    border-radius: 6px;
+.input{
+    width: 85%;
+    height: fit-content;
+    display: flex;
+    flex-direction: column;
+}
+
+.input > p{
+    margin-bottom: -4px!important;
+    font-family: 'Roboto Mono', monospace;
+    font-size: .8em;
+    font-weight: 600;
+    
+}
+
+.input > input{
+    width: 100%;
     border: none;
-    background-color: #85c0ea;
-    color: #18082e;
-    font-weight: 500;
+    border-bottom: #a6a4a8 1px solid;
+    background-color: #e7e7e7;
+    color: #000000;
+    font-weight: 200;
+    font-size: .8em;
+    font-family: 'Roboto Mono', monospace;
 }
 
-.login-form .form > input::placeholder{
-    color: #18082e;
-    font-weight: 500;
+.input > input::placeholder{
+    color: #636363;
+    font-weight: 400;
+    font-size: .9em;
+    font-family: 'Roboto Mono', monospace;
 }
+
+.input > input:focus {
+    outline: none !important;
+    border-bottom: 1.3px solid #676668;
+  }
 
 .login-form .form > button{
     width: 50%;
     align-self: center;
-    margin-top: 10px;
+    margin-top: 15px;
     border: none;
     border-radius: 10px;
-    background-color: #85c0ea;
-    color: #18082e;
+    background: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(54,64,161,1) 0%, rgba(0,212,255,1) 100%);
+    color: black;
     font-weight: 600;
 }
 
 .login-form .form > button:hover{
-    background-color: #1e6190;
+    background-color: rgb(2,0,36);
+    background: linear-gradient(-90deg, rgba(2,0,36,1) 0%, rgba(54,64,161,1) 0%, rgba(0,212,255,1) 100%);
 }
 
 .login-form .form > button:active{
-    background-color: #155079;
+    background-color: rgb(2,0,36);
+    background: linear-gradient(-90deg, rgb(0, 0, 3) 0%, rgb(44, 52, 129) 0%, rgb(0, 196, 235) 100%);
 }

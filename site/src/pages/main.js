@@ -30,6 +30,9 @@ const Main  = (props) => {
                 }
             })
         }
+        else{
+            alert("Please fill out all fields!")
+        }
     }
 
 
@@ -46,8 +49,14 @@ const Main  = (props) => {
                 <div className="login-form">
                     <h1>Login</h1>
                     <div className="form">
-                        <input onChange={event => UpdateFields(event, "usrn")} value={usrn} type="text" placeholder="Username" name="username"/>
-                        <input onChange={event => UpdateFields(event, "pass")} value={pass} type="password" placeholder="Password"  name="password"/>
+                        <div className="input">
+                            <p>Username:</p>
+                            <input onChange={event => UpdateFields(event, "usrn")} value={usrn} type="text" placeholder='Type your username' name="username"/>
+                        </div>
+                        <div className="input" style={{'margin-top': '15px'}}>
+                            <p>Password:</p>
+                            <input onChange={event => UpdateFields(event, "pass")} value={pass} type="password" placeholder="Type your password"  name="password"/>
+                        </div>
                         <button onClick={LoginUser}>Login</button>
                     </div>
                 </div>
