@@ -20,12 +20,13 @@ const Signup  = (props) => {
             axios.post(props.apiUrl + "signup/", {usrn: usrn, pass: pass})
             .then(res => {
                 if (res.data === "OK"){
-                    window.location.href = props.siteUrl + "main/";
+                    window.location.href = props.siteUrl + "/";
                 }
                 else{
                     alert("Error!");
                 }
             })
+            .catch(e => {alert("Can't connect to server right now. Please try again later."); window.location.reload()});
         }
         else{
             alert("Please fill out all fields!")
@@ -45,7 +46,7 @@ const Signup  = (props) => {
                             <p>Password:</p>
                             <input onChange={event => UpdateFields(event, "pass")} value={pass} type="password" placeholder="Type your password"  name="password"/>
                         </div>
-                        <button onClick={SendNewUser}>SignUp</button>
+                        <button className='signup-btn' onClick={SendNewUser}>SignUp</button>
                     </div>
             </div>
         </div>

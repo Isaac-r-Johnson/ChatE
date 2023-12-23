@@ -39,7 +39,7 @@ const Main  = (props) => {
     if (loggedIn){
         return (
             <div>
-                <h1>Main Page</h1>
+                
             </div>
         );
     }
@@ -58,6 +58,7 @@ const Main  = (props) => {
                             <input onChange={event => UpdateFields(event, "pass")} value={pass} type="password" placeholder="Type your password"  name="password"/>
                         </div>
                         <button onClick={LoginUser}>Login</button>
+                        <p>If you don't have an account, please signup <a href="/signup">here</a>!</p>
                     </div>
                 </div>
             </div>
