@@ -84,6 +84,15 @@ app.post("/login", (req, res) => {
     })
 });
 
+app.post('/profilepic', (req, res) => {
+    User.findOne({name: req.body.name}).then(user => {
+        res.send(user.profilePicture);
+    })
+    .catch(e => {
+        console.log("Error getting profile picture!");
+    });
+});
+
 app.post("/signup", (req, res) => {
     User.countDocuments().then(count => {
         User.insertMany([{

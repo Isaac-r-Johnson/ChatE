@@ -1,11 +1,13 @@
 import React from "react";
 import axios from "axios";
+import Contact from "../components/Contact";
 
 const Main  = (props) => {
 
     const [loggedIn, setLoggedIn] = React.useState(false);
     const [usrn, setUsrn] = React.useState("");
     const [pass, setPass] = React.useState("");
+    const [profilePic, setProfilePic] = React.useState("");
 
 
 
@@ -24,10 +26,18 @@ const Main  = (props) => {
             .then(res => {
                 if (res.data === "-YES-"){
                     setLoggedIn(true);
+                    axios.post(props.apiUrl + 'profilepic/', {name: usrn})
+                    .then(res => {
+                        setProfilePic(res.data);
+                    });
                 }
                 else{
                     alert("Username or Password is incorrect!");
                 }
+            })
+            .catch(e => {
+                alert("Can not connect to the server at this time. Sorry!"); 
+                window.location.reload();
             })
         }
         else{
@@ -38,8 +48,21 @@ const Main  = (props) => {
 
     if (loggedIn){
         return (
-            <div>
-                
+            <div className="main">
+
+                <div className="contact-ui">
+                    <div className="profile">
+                        <img src={profilePic} alt='Profile'/>
+                        <h4>{usrn}</h4>
+                    </div>
+                    <Contact name="Isaac Johnson" image="https://res.cloudinary.com/dqaxkucbu/image/upload/v1703376775/ChatE/Lower_Quality_iahv5e.jpg" time="10:00"/>
+                    <hr/>
+                </div>
+
+                <div className="message-ui">
+                    <h1>Messages</h1>
+                </div>
+
             </div>
         );
     }

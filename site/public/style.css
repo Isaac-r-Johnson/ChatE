@@ -118,7 +118,81 @@
 
 /* Messaging Page */
 
+.main{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
 
+hr{
+    margin: 0px 6px 0px 6px!important;
+}
+
+.contact-ui{
+    background-color: #E2EEF7;
+    width: 100%;
+    height: 100vh;
+}
+
+.profile{
+    margin: 5px 5px 5px 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 3px;
+    background-color: rgb(168, 172, 177);
+    padding: 5px 0px 5px 5px;
+}
+
+.profile img{
+    vertical-align: middle;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.profile > h4{
+    margin-left: 20px;
+    margin-top: 3px;
+}
+
+.contact{
+    margin: 5px 5px 5px 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 3px;
+    padding-left: 3px;
+}
+
+.contact:hover{
+    background-color: rgb(168, 172, 177);
+    cursor: pointer;
+}
+
+.contact:active{
+    background-color: #9ca2a8;
+}
+
+.contact img{
+    vertical-align: middle;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.contact > h6{
+    margin-left: 10px;
+    margin-top: 3px;
+}
+
+.contact p{
+    font-size: .7em;
+    margin-left: 30%;
+}
+
+.message-ui{
+    background-color: #FFFFFF;
+    width: 100%;
+    height: 100vh;
+}
 
 
 
