@@ -45,10 +45,27 @@ const GetTimeStamp = () => {
     return month + '/' + day + '/' + year + '@' + hour + ':' + min + ':' + sec
 }
 
+const getFormattedDate = (fullDate) => {
+    firstSplitDate = fullDate.split("@");
+    secondSplitDates = firstSplitDate[0].split("/");
+    return secondSplitDates[0] + '/' + secondSplitDates[1];
+}
+
+const FormatContactInfo = (contact) => {
+    return {
+        name: contact.name,
+        profilePicture: contact.profilePicture,
+        date: getFormattedDate(contact.messages.me[contact.messages.me.length-1].date)
+    }
+}
+
+// Variables
+var currentMessageThread = {};
+
 
 // Get Requests
 app.get("/create-user", (req, res) => {
-    res.send(GetTimeStamp());
+    
 });
 
 app.get("/users", (req, res) => {
@@ -57,6 +74,10 @@ app.get("/users", (req, res) => {
     });
 });
 
+app.get('/messagethread', (req, res) => {
+    console.log(currentMessageThread);
+    res.send(currentMessageThread);
+});
 
 //Post Requests
 app.post("/login", (req, res) => {
@@ -91,6 +112,32 @@ app.post('/profilepic', (req, res) => {
     .catch(e => {
         console.log("Error getting profile picture!");
     });
+});
+
+app.post("/getcontacts", (req, res) => {
+    var formattedContactInfo = [];
+    User.find({name: req.body.account}).then(user => {
+        user[0].contacts.forEach(contact => {
+            formattedContactInfo.push(FormatContactInfo(contact))
+        })
+    }).then(() => {
+        console.log('Success!');
+        res.send(formattedContactInfo);
+    });
+});
+
+app.post('/selectcontactinfo', (req, res) => {
+    console.log("Selected " + req.body.contact);
+    User.findOne({name: req.body.account})
+    .then(user => {
+        user.contacts.forEach(contact => {
+            if (contact.name === req.body.contact){
+                currentMessageThread = contact.messages;
+                res.send("-OK-");
+            }
+        });
+    })
+    .catch(e => {res.send("-NO-")});
 });
 
 app.post("/signup", (req, res) => {

@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import Contact from "../components/Contact";
+import Message from "../components/Message";
 
 const Main  = (props) => {
 
@@ -8,8 +9,17 @@ const Main  = (props) => {
     const [usrn, setUsrn] = React.useState("");
     const [pass, setPass] = React.useState("");
     const [profilePic, setProfilePic] = React.useState("");
+    const [contacts, setContacts] = React.useState([]);
+    const [messageThread, setMessageThread] = React.useState({});
 
 
+    // Temporary!
+    // React.useEffect(() => {
+    //     axios.post(props.apiUrl + 'profilepic/', {name: usrn}).then(res => {
+    //         setProfilePic(res.data);
+    //     });
+    // });
+    
 
     const UpdateFields = (e, field) => {
         if (field === "usrn"){
@@ -30,6 +40,10 @@ const Main  = (props) => {
                     .then(res => {
                         setProfilePic(res.data);
                     });
+                    axios.post(props.apiUrl + 'getcontacts/', {account: usrn})
+                    .then(res => {
+                        setContacts(res.data);
+                    });
                 }
                 else{
                     alert("Username or Password is incorrect!");
@@ -45,6 +59,12 @@ const Main  = (props) => {
         }
     }
 
+    const GetMessageThread = () => {
+        axios.get(props.apiUrl + "messagethread/")
+        .then(res => {
+            setMessageThread(res.data);
+        });
+    }
 
     if (loggedIn){
         return (
@@ -55,8 +75,12 @@ const Main  = (props) => {
                         <img src={profilePic} alt='Profile'/>
                         <h4>{usrn}</h4>
                     </div>
-                    <Contact name="Isaac Johnson" image="https://res.cloudinary.com/dqaxkucbu/image/upload/v1703376775/ChatE/Lower_Quality_iahv5e.jpg" time="10:00"/>
-                    <hr/>
+                    {contacts.map(contact => (
+                        <div>
+                            <Contact customClickEvent={GetMessageThread} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture} date={contact.date}/>
+                            <hr/>
+                        </div>
+                    ))}
                 </div>
 
                 <div className="message-ui">
