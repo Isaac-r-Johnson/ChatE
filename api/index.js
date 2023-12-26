@@ -121,7 +121,7 @@ app.post("/getcontacts", (req, res) => {
             formattedContactInfo.push(FormatContactInfo(contact))
         })
     }).then(() => {
-        console.log('Success!');
+        console.log('Sent contacts for ' + req.body.account);
         res.send(formattedContactInfo);
     });
 });

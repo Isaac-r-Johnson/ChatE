@@ -11,14 +11,6 @@ const Main  = (props) => {
     const [profilePic, setProfilePic] = React.useState("");
     const [contacts, setContacts] = React.useState([]);
     const [messageThread, setMessageThread] = React.useState({});
-
-
-    // Temporary!
-    // React.useEffect(() => {
-    //     axios.post(props.apiUrl + 'profilepic/', {name: usrn}).then(res => {
-    //         setProfilePic(res.data);
-    //     });
-    // });
     
 
     const UpdateFields = (e, field) => {
@@ -66,6 +58,11 @@ const Main  = (props) => {
         });
     }
 
+    const AddContact = () => {
+        console.log("Add Contact!");
+    }
+
+
     if (loggedIn){
         return (
             <div className="main">
@@ -76,11 +73,9 @@ const Main  = (props) => {
                         <h4>{usrn}</h4>
                     </div>
                     {contacts.map(contact => (
-                        <div>
-                            <Contact customClickEvent={GetMessageThread} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture} date={contact.date}/>
-                            <hr/>
-                        </div>
+                        <Contact customClickEvent={GetMessageThread} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture} date={contact.date}/>
                     ))}
+                    <button onClick={AddContact} className="add-contact">+ Contact</button>
                 </div>
 
                 <div className="message-ui">
