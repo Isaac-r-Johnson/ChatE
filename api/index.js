@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     profilePicture: String,
     contacts: [{name: String, 
         profilePicture: String, 
-        messages: {me: [{message: String, date: String}], them: [{message: String, date: String}]}, 
+        messages: [{sender: String, message: String}], 
         contactId: Number}],
     contactId: Number
 });
@@ -55,7 +55,6 @@ const FormatContactInfo = (contact) => {
     return {
         name: contact.name,
         profilePicture: contact.profilePicture,
-        date: getFormattedDate(contact.messages.me[contact.messages.me.length-1].date)
     }
 }
 

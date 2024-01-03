@@ -2,8 +2,8 @@ import React from "react";
 
 const Message = (props) => {
     return (
-        <div>
-
+        <div className={props.sender}>
+            <h6>{props.content}</h6>
         </div>
     );
 }

@@ -20,7 +20,6 @@ const Contact = (props) => {
             <div className="contact" onClick={GetContactInfo}>
                 <img src={props.image} alt='Profile'/>
                 <h6>{props.contact}</h6>
-                <p>{props.date}</p>
             </div>
     );
 }

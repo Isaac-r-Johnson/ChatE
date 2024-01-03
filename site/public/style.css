@@ -226,6 +226,29 @@ hr{
 .message-ui{
     width: 100%;
     height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.me{
+    width: fit-content;
+    align-self: flex-end;
+    padding: 5px 5px 0px 5px;
+    margin-right: 20px;
+    margin-top: 10px;
+    background-color: #1d2164c7;
+    border-radius: 10px;
+}
+
+.them{
+    width: fit-content;
+    align-self: flex-start;
+    padding: 5px 5px 0px 5px;
+    margin-left: 20px;
+    margin-top: 10px;
+    background-color: #06c5f5cb;
+    border-radius: 10px;
+
 }
 
 

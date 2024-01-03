@@ -66,9 +66,9 @@ const Main  = (props) => {
     const MessageInterface = () => {
         if (messageThread !== null && loggedIn){
             return (
-                <div>
-                    {messageThread.me.map(message => (
-                        <h1>{message.message}</h1>
+                <div className="message-ui">
+                    {messageThread.map(message => (
+                        <Message sender={message.sender} content={message.message}/>
                     ))}
                 </div>
             )
@@ -86,14 +86,12 @@ const Main  = (props) => {
                         <h4>{usrn}</h4>
                     </div>
                     {contacts.map(contact => (
-                        <Contact customClickEvent={GetMessageThread} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture} date={contact.date}/>
+                        <Contact customClickEvent={GetMessageThread} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture}/>
                     ))}
                     <button onClick={AddContact} className="add-contact">+ Contact</button>
                 </div>
 
-                <div className="message-ui">
-                        <MessageInterface/>
-                </div>
+                <MessageInterface/>
 
             </div>
         );
