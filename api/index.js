@@ -59,8 +59,17 @@ const FormatContactInfo = (contact) => {
     }
 }
 
+const RemoveAccountFromArray = (account) => {
+    currentMessageThreads.forEach(thread => {
+        if (thread.account == account){
+            console.log("Deleted thread accounts for " + thread.account);
+            delete currentMessageThreads[currentMessageThreads.indexOf(thread)];
+        }
+    });
+}
+
 // Variables
-var currentMessageThread = {};
+var currentMessageThreads = [];
 
 
 // Get Requests
@@ -72,11 +81,6 @@ app.get("/users", (req, res) => {
     User.find().then(users => {
         res.send(users);
     });
-});
-
-app.get('/messagethread', (req, res) => {
-    console.log(currentMessageThread);
-    res.send(currentMessageThread);
 });
 
 //Post Requests
@@ -132,12 +136,23 @@ app.post('/selectcontactinfo', (req, res) => {
     .then(user => {
         user.contacts.forEach(contact => {
             if (contact.name === req.body.contact){
-                currentMessageThread = contact.messages;
+                RemoveAccountFromArray(req.body.account)
+                currentMessageThreads.push({account: req.body.account, messages: contact.messages});
                 res.send("-OK-");
             }
         });
     })
-    .catch(e => {res.send("-NO-")});
+    .catch(e => {console.log(e); res.send("-NO-")});
+});
+
+app.post('/messagethread', (req, res) => {
+    var found = false;
+    currentMessageThreads.forEach(thread => {
+        if (thread.account === req.body.account){
+            found = true;
+            res.send(thread.messages);
+        }
+    });
 });
 
 app.post("/signup", (req, res) => {

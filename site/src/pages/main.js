@@ -10,9 +10,9 @@ const Main  = (props) => {
     const [pass, setPass] = React.useState("");
     const [profilePic, setProfilePic] = React.useState("");
     const [contacts, setContacts] = React.useState([]);
-    const [messageThread, setMessageThread] = React.useState({});
-    
+    const [messageThread, setMessageThread] = React.useState(null);
 
+    
     const UpdateFields = (e, field) => {
         if (field === "usrn"){
             setUsrn(e.target.value);
@@ -52,14 +52,27 @@ const Main  = (props) => {
     }
 
     const GetMessageThread = () => {
-        axios.get(props.apiUrl + "messagethread/")
+        axios.post(props.apiUrl + "messagethread/", {account: usrn})
         .then(res => {
+            console.log(res.data);
             setMessageThread(res.data);
         });
     }
 
     const AddContact = () => {
         console.log("Add Contact!");
+    }
+
+    const MessageInterface = () => {
+        if (messageThread !== null && loggedIn){
+            return (
+                <div>
+                    {messageThread.me.map(message => (
+                        <h1>{message.message}</h1>
+                    ))}
+                </div>
+            )
+        }
     }
 
 
@@ -79,7 +92,7 @@ const Main  = (props) => {
                 </div>
 
                 <div className="message-ui">
-                    <h1>Messages</h1>
+                        <MessageInterface/>
                 </div>
 
             </div>
