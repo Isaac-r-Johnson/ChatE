@@ -6,11 +6,13 @@ import Message from "../components/Message";
 const Main  = (props) => {
 
     const [loggedIn, setLoggedIn] = React.useState(false);
-    const [usrn, setUsrn] = React.useState("");
-    const [pass, setPass] = React.useState("");
+    const [usrn, setUsrn] = React.useState("Isaac Johnson");
+    const [pass, setPass] = React.useState("1021mki");
     const [profilePic, setProfilePic] = React.useState("");
     const [contacts, setContacts] = React.useState([]);
-    const [messageThread, setMessageThread] = React.useState(null);
+    const [messageThread, setMessageThread] = React.useState({});
+    const [isOnContact, setIsOnContact] = React.useState(false);
+    const [message, setMessage] = React.useState("");
 
     
     const UpdateFields = (e, field) => {
@@ -19,6 +21,9 @@ const Main  = (props) => {
         }
         else if (field === "pass"){
             setPass(e.target.value);
+        }
+        else if (field === "msg"){
+            setMessage(e.target.value);
         }
     }
 
@@ -51,11 +56,11 @@ const Main  = (props) => {
         }
     }
 
-    const GetMessageThread = () => {
-        axios.post(props.apiUrl + "messagethread/", {account: usrn})
+    const SendMessage = () => {
+        axios.post(props.apiUrl + "send-message/", {sender: usrn, recv: messageThread.contact, msg: message})
         .then(res => {
             console.log(res.data);
-            setMessageThread(res.data);
+            setMessage("");
         });
     }
 
@@ -63,18 +68,14 @@ const Main  = (props) => {
         console.log("Add Contact!");
     }
 
-    const MessageInterface = () => {
-        if (messageThread !== null && loggedIn){
-            return (
-                <div className="message-ui">
-                    {messageThread.map(message => (
-                        <Message sender={message.sender} content={message.message}/>
-                    ))}
-                </div>
-            )
-        }
+    const GetMessageThread = () => {
+        axios.post(props.apiUrl + "messagethread/", {account: usrn})
+        .then(res => {
+            console.log(res.data);
+            setMessageThread(res.data);
+            setIsOnContact(true);
+        });
     }
-
 
     if (loggedIn){
         return (
@@ -90,9 +91,24 @@ const Main  = (props) => {
                     ))}
                     <button onClick={AddContact} className="add-contact">+ Contact</button>
                 </div>
-
-                <MessageInterface/>
-
+                
+                {isOnContact ? (
+                    <div className="message-ui">
+                        {messageThread.messages.map(message => (
+                            <Message sender={message.sender} content={message.message}/>
+                        ))}
+                        <div className="message-box">
+                            <input type="text" placeholder="Start Typing..." onChange={event => UpdateFields(event, "msg")} value={message}/>
+                            <button onClick={SendMessage}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
+                                    <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                ):(
+                    null
+                )}
             </div>
         );
     }

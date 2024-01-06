@@ -248,7 +248,56 @@ hr{
     margin-top: 10px;
     background-color: #06c5f5cb;
     border-radius: 10px;
+}
 
+.message-box{
+    position: fixed;
+    width: 100%;
+    top: 91vh;
+    display: flex;
+}
+
+.message-box > input{
+    border-radius: 8px;
+    height: 40px;
+    border: none;
+    width: 69%;
+    border: 1.5px solid rgb(0, 0, 0);
+    background-color: #00000000;
+    margin-left: 5px;
+}
+
+.message-box > input::placeholder{
+    color: #000000;
+    font-weight: 400;
+    font-size: .9em;
+    font-family: 'Noto Sans TC', sans-serif;
+}
+
+.message-box > input:focus {
+    outline: none !important;
+  }
+
+.message-box > button{
+    margin: 2px 5px 2px 5px;
+    width: 50px;
+    border: none;
+    border-radius: 10px;
+    background: rgb(2,0,36);
+    background: linear-gradient(-90deg, rgba(2,0,36,1) 0%, rgba(54,64,161,1) 0%, rgba(0,212,255,1) 100%);
+    color: black;
+    font-weight: 600;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.message-box > button:hover{
+    background-color: rgb(2,0,36);
+    background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(54,64,161,1) 0%, rgba(0,212,255,1) 100%);
+}
+
+.message-box > button:active{
+    background-color: rgb(2,0,36);
+    background: linear-gradient(90deg, rgb(0, 0, 3) 0%, rgb(44, 52, 129) 0%, rgb(0, 196, 235) 100%);
 }
 
 

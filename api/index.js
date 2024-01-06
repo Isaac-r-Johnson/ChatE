@@ -108,6 +108,18 @@ app.post("/login", (req, res) => {
     })
 });
 
+app.post("/signup", (req, res) => {
+    User.countDocuments().then(count => {
+        User.insertMany([{
+            name: req.body.usrn,
+            password: req.body.pass,
+            profilePicture: "None",
+            contacts: [],
+            contactId: count
+        }])
+    }).then(res.send("OK"));
+});
+
 app.post('/profilepic', (req, res) => {
     User.findOne({name: req.body.name}).then(user => {
         res.send(user.profilePicture);
@@ -136,7 +148,7 @@ app.post('/selectcontactinfo', (req, res) => {
         user.contacts.forEach(contact => {
             if (contact.name === req.body.contact){
                 RemoveAccountFromArray(req.body.account)
-                currentMessageThreads.push({account: req.body.account, messages: contact.messages});
+                currentMessageThreads.push({account: req.body.account, contact: contact.name, messages: contact.messages});
                 res.send("-OK-");
             }
         });
@@ -149,21 +161,54 @@ app.post('/messagethread', (req, res) => {
     currentMessageThreads.forEach(thread => {
         if (thread.account === req.body.account){
             found = true;
-            res.send(thread.messages);
+            res.send(thread);
         }
     });
 });
 
-app.post("/signup", (req, res) => {
-    User.countDocuments().then(count => {
-        User.insertMany([{
-            name: req.body.usrn,
-            password: req.body.pass,
-            profilePicture: "None",
-            contacts: [],
-            contactId: count
-        }])
-    }).then(res.send("OK"));
+app.post("/send-message", async (req, res) => { //< Mark callback as async
+    try{
+        const sender = req.body.sender;
+        const recv = req.body.recv;
+        const message = req.body.msg
+        // Add message to sender
+        const userSender = await User.findOneAndUpdate({ //< use await pattern
+            name: sender,
+            'contacts.name': recv
+        },{
+            $push:{
+                'contacts.$.messages': { sender: "me", message: message }    
+            }
+        }, {new: true});
+        if(!userSender){ //< If no sender was found return error
+            return res.status(400).json({
+                message: 'Sender not found'
+            })
+        }
+        // Add message to receiver
+        const userReceiver = await User.findOneAndUpdate({ //< use await pattern
+            name: recv,
+            'contacts.name': sender
+        },{
+            $push:{
+                'contacts.$.messages': { sender: "them", message: message }
+            }
+        }, {new: true});
+        if(!userReceiver){ //< If no receiver was found return error
+            return res.status(400).json({
+                message: 'Receiver not found'
+            })
+            // Handle deletion of object in sender
+        }
+        return res.status(201).json({
+            message: 'Messages Saved!'
+        })
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message: 'Error on server.'
+        })
+    }
 });
 
 
