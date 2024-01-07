@@ -6,8 +6,8 @@ import Main from "./pages/main";
 
 const App = () => {
 
-    const apiUrl = "http://localhost:5000/"
-    const siteUrl = "http://localhost:3000/";
+    const apiUrl = "http://192.168.1.193:5000/"
+    const siteUrl = "http://192.168.1.193:3000/";
 
     return (
         <Router>

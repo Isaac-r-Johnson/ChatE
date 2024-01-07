@@ -2,19 +2,43 @@ import React from "react";
 import axios from "axios";
 import Contact from "../components/Contact";
 import Message from "../components/Message";
+import ScrollToBottom from 'react-scroll-to-bottom';
 
 const Main  = (props) => {
 
     const [loggedIn, setLoggedIn] = React.useState(false);
-    const [usrn, setUsrn] = React.useState("Isaac Johnson");
-    const [pass, setPass] = React.useState("1021mki");
+    const [usrn, setUsrn] = React.useState("");
+    const [pass, setPass] = React.useState("");
     const [profilePic, setProfilePic] = React.useState("");
     const [contacts, setContacts] = React.useState([]);
     const [messageThread, setMessageThread] = React.useState({});
     const [isOnContact, setIsOnContact] = React.useState(false);
     const [message, setMessage] = React.useState("");
 
-    
+    React.useEffect(() => {
+        const interval = setInterval(() => {
+            if (isOnContact){
+                console.log(interval);
+                axios.post(props.apiUrl + "selectcontactinfo/", {account: usrn, contact: messageThread.contact}, { timeout: 15000 })
+                .then(res => {
+                    if (res.data === "-NO-"){
+                        alert("Are server is having trouble sending data.")
+                    }
+                    else{
+                        GetMessageThread();
+                    }
+                })
+                .catch(error => {
+                    if (axios.isCancel(error)) {
+                       console.log("Request canceled", error.message);
+                    } else {
+                       console.error("AxiosError:", error);
+                    }
+                 });
+            }
+        }, 10000);
+    });
+
     const UpdateFields = (e, field) => {
         if (field === "usrn"){
             setUsrn(e.target.value);
@@ -57,11 +81,22 @@ const Main  = (props) => {
     }
 
     const SendMessage = () => {
-        axios.post(props.apiUrl + "send-message/", {sender: usrn, recv: messageThread.contact, msg: message})
-        .then(res => {
-            console.log(res.data);
-            setMessage("");
-        });
+        if (message !== ""){
+            axios.post(props.apiUrl + "send-message/", {sender: usrn, recv: messageThread.contact, msg: message})
+            .then(res => {
+                console.log(res.data);
+                setMessage("");
+                axios.post(props.apiUrl + "selectcontactinfo/", {account: usrn, contact: messageThread.contact})
+                .then(res => {
+                    if (res.data === "-NO-"){
+                        alert("Are server is having trouble sending data.")
+                    }
+                    else{
+                        GetMessageThread();
+                    }
+                });
+            });
+        }
     }
 
     const AddContact = () => {
@@ -94,9 +129,13 @@ const Main  = (props) => {
                 
                 {isOnContact ? (
                     <div className="message-ui">
-                        {messageThread.messages.map(message => (
-                            <Message sender={message.sender} content={message.message}/>
-                        ))}
+                        <ScrollToBottom>
+                            <div className="messages">
+                                {messageThread.messages.map(message => (
+                                    <Message sender={message.sender} content={message.message}/>
+                                ))}
+                            </div>
+                        </ScrollToBottom>
                         <div className="message-box">
                             <input type="text" placeholder="Start Typing..." onChange={event => UpdateFields(event, "msg")} value={message}/>
                             <button onClick={SendMessage}>

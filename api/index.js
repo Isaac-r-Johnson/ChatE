@@ -9,11 +9,11 @@ const cors = require("cors");
 const app = express()
 app.use(bodyParser.json({extended:true}));
 app.use(express.urlencoded({extended:true}));
-app.use(cors({
-    origin: '*'
-}));
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
+app.use(cors());
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
@@ -45,11 +45,6 @@ const GetTimeStamp = () => {
     return month + '/' + day + '/' + year + '@' + hour + ':' + min + ':' + sec
 }
 
-const getFormattedDate = (fullDate) => {
-    firstSplitDate = fullDate.split("@");
-    secondSplitDates = firstSplitDate[0].split("/");
-    return secondSplitDates[0] + '/' + secondSplitDates[1];
-}
 
 const FormatContactInfo = (contact) => {
     return {
@@ -61,7 +56,6 @@ const FormatContactInfo = (contact) => {
 const RemoveAccountFromArray = (account) => {
     currentMessageThreads.forEach(thread => {
         if (thread.account == account){
-            console.log("Deleted thread accounts for " + thread.account);
             delete currentMessageThreads[currentMessageThreads.indexOf(thread)];
         }
     });
@@ -136,7 +130,6 @@ app.post("/getcontacts", (req, res) => {
             formattedContactInfo.push(FormatContactInfo(contact))
         })
     }).then(() => {
-        console.log('Sent contacts for ' + req.body.account);
         res.send(formattedContactInfo);
     });
 });
