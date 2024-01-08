@@ -7,37 +7,24 @@ import ScrollToBottom from 'react-scroll-to-bottom';
 const Main  = (props) => {
 
     const [loggedIn, setLoggedIn] = React.useState(false);
+    const [isOnContact, setIsOnContact] = React.useState(false);
     const [usrn, setUsrn] = React.useState("");
     const [pass, setPass] = React.useState("");
     const [profilePic, setProfilePic] = React.useState("");
     const [contacts, setContacts] = React.useState([]);
-    const [messageThread, setMessageThread] = React.useState({});
-    const [isOnContact, setIsOnContact] = React.useState(false);
+    const [messages, setMessages] = React.useState({});
     const [message, setMessage] = React.useState("");
 
     React.useEffect(() => {
         const interval = setInterval(() => {
             if (isOnContact){
-                console.log(interval);
-                axios.post(props.apiUrl + "selectcontactinfo/", {account: usrn, contact: messageThread.contact}, { timeout: 15000 })
-                .then(res => {
-                    if (res.data === "-NO-"){
-                        alert("Are server is having trouble sending data.")
-                    }
-                    else{
-                        GetMessageThread();
-                    }
-                })
-                .catch(error => {
-                    if (axios.isCancel(error)) {
-                       console.log("Request canceled", error.message);
-                    } else {
-                       console.error("AxiosError:", error);
-                    }
-                 });
+                console.log("Updating Messages.....")
+                GetMessages(messages.contact);
             }
-        }, 10000);
-    });
+        }, 3000);
+      
+        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+      }, [isOnContact, messages])
 
     const UpdateFields = (e, field) => {
         if (field === "usrn"){
@@ -48,6 +35,12 @@ const Main  = (props) => {
         }
         else if (field === "msg"){
             setMessage(e.target.value);
+        }
+    }
+
+    const HandleKeyPress = (e) => {
+        if(e.key === 'Enter'){
+            SendMessage();
         }
     }
 
@@ -82,17 +75,16 @@ const Main  = (props) => {
 
     const SendMessage = () => {
         if (message !== ""){
-            axios.post(props.apiUrl + "send-message/", {sender: usrn, recv: messageThread.contact, msg: message})
+            axios.post(props.apiUrl + "send-message/", {sender: usrn, recv: messages.contact, msg: message})
             .then(res => {
-                console.log(res.data);
                 setMessage("");
-                axios.post(props.apiUrl + "selectcontactinfo/", {account: usrn, contact: messageThread.contact})
+                axios.post(props.apiUrl + "selectcontactinfo/", {account: usrn, contact: messages.contact})
                 .then(res => {
                     if (res.data === "-NO-"){
                         alert("Are server is having trouble sending data.")
                     }
                     else{
-                        GetMessageThread();
+                        GetMessages(messages.contact);
                     }
                 });
             });
@@ -103,12 +95,16 @@ const Main  = (props) => {
         console.log("Add Contact!");
     }
 
-    const GetMessageThread = () => {
-        axios.post(props.apiUrl + "messagethread/", {account: usrn})
+    const GetMessages = (contact) => {
+        axios.post(props.apiUrl + "getmessages/", {user: usrn, contact: contact})
         .then(res => {
-            console.log(res.data);
-            setMessageThread(res.data);
-            setIsOnContact(true);
+            if (res.data !== "Error!"){
+                setMessages(res.data);
+                setIsOnContact(true);
+            }
+            else{
+                console.log(res.data);
+            }
         });
     }
 
@@ -122,7 +118,7 @@ const Main  = (props) => {
                         <h4>{usrn}</h4>
                     </div>
                     {contacts.map(contact => (
-                        <Contact customClickEvent={GetMessageThread} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture}/>
+                        <Contact customClickEvent={event => GetMessages(contact.name)} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture}/>
                     ))}
                     <button onClick={AddContact} className="add-contact">+ Contact</button>
                 </div>
@@ -131,13 +127,13 @@ const Main  = (props) => {
                     <div className="message-ui">
                         <ScrollToBottom>
                             <div className="messages">
-                                {messageThread.messages.map(message => (
+                                {messages.messages.map(message => (
                                     <Message sender={message.sender} content={message.message}/>
                                 ))}
                             </div>
                         </ScrollToBottom>
                         <div className="message-box">
-                            <input type="text" placeholder="Start Typing..." onChange={event => UpdateFields(event, "msg")} value={message}/>
+                            <input type="text" placeholder="Start Typing..." onChange={event => UpdateFields(event, "msg")} value={message} onKeyDownCapture={HandleKeyPress}/>
                             <button onClick={SendMessage}>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send-fill" viewBox="0 0 16 16">
                                     <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471z"/>

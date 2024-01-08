@@ -34,18 +34,6 @@ const User = new mongoose.model('User', userSchema);
 
 
 // Functions
-const GetTimeStamp = () => {
-    const date = new Date();
-    const month = date.getMonth()+1;
-    const day = date.getDate()+1
-    const year = date.getFullYear();
-    const hour = date.getHours();
-    const min = date.getMinutes();
-    const sec = date.getSeconds();
-    return month + '/' + day + '/' + year + '@' + hour + ':' + min + ':' + sec
-}
-
-
 const FormatContactInfo = (contact) => {
     return {
         name: contact.name,
@@ -135,7 +123,6 @@ app.post("/getcontacts", (req, res) => {
 });
 
 app.post('/selectcontactinfo', (req, res) => {
-    console.log("Selected " + req.body.contact);
     User.findOne({name: req.body.account})
     .then(user => {
         user.contacts.forEach(contact => {
@@ -202,6 +189,19 @@ app.post("/send-message", async (req, res) => { //< Mark callback as async
             message: 'Error on server.'
         })
     }
+});
+
+app.post("/getmessages", (req, res) => {
+    var messagingUser = req.body.user;
+    var requestedContact = req.body.contact;
+    User.findOne({name: messagingUser}).then(user => {
+        user.contacts.forEach(contact => {
+            if (contact.name == requestedContact){
+                res.send({sender: messagingUser, contact: contact.name, messages: contact.messages});
+            }
+        })
+    })
+    .catch(e => {res.send("Error!"); console.log(e)});
 });
 
 
