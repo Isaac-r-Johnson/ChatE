@@ -25,6 +25,10 @@
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
+.sf{
+    height: 275px;
+}
+
 .login-form h1{
     padding-top: 10px;
     color: black;
@@ -192,11 +196,13 @@ hr{
     color: white;
 }
 
-.contact p{
-    font-size: .7em;
+.unread{
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    background-color: #06C1F3;
     position: absolute;
-    left: 235px;
-    color: white;
+    left: 250px;
 }
 
 .add-contact{

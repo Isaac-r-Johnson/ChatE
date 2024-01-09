@@ -26,12 +26,13 @@ const userSchema = new mongoose.Schema({
     profilePicture: String,
     contacts: [{name: String, 
         profilePicture: String, 
-        messages: [{sender: String, message: String}], 
-        contactId: Number}],
-    contactId: Number
+        messages: [{sender: String, message: String}]
+        }],
 });
 const User = new mongoose.model('User', userSchema);
 
+// Variables
+var unreadMessages = []
 
 // Functions
 const FormatContactInfo = (contact) => {
@@ -40,17 +41,6 @@ const FormatContactInfo = (contact) => {
         profilePicture: contact.profilePicture,
     }
 }
-
-const RemoveAccountFromArray = (account) => {
-    currentMessageThreads.forEach(thread => {
-        if (thread.account == account){
-            delete currentMessageThreads[currentMessageThreads.indexOf(thread)];
-        }
-    });
-}
-
-// Variables
-var currentMessageThreads = [];
 
 
 // Get Requests
@@ -91,15 +81,12 @@ app.post("/login", (req, res) => {
 });
 
 app.post("/signup", (req, res) => {
-    User.countDocuments().then(count => {
-        User.insertMany([{
-            name: req.body.usrn,
-            password: req.body.pass,
-            profilePicture: "None",
-            contacts: [],
-            contactId: count
-        }])
-    }).then(res.send("OK"));
+    User.insertMany([{
+        name: req.body.usrn,
+        password: req.body.pass,
+        profilePicture: req.body.pic,
+        contacts: [],
+    }]).then(res.send("OK"));
 });
 
 app.post('/profilepic', (req, res) => {
@@ -118,41 +105,24 @@ app.post("/getcontacts", (req, res) => {
             formattedContactInfo.push(FormatContactInfo(contact))
         })
     }).then(() => {
-        res.send(formattedContactInfo);
-    });
-});
-
-app.post('/selectcontactinfo', (req, res) => {
-    User.findOne({name: req.body.account})
-    .then(user => {
-        user.contacts.forEach(contact => {
-            if (contact.name === req.body.contact){
-                RemoveAccountFromArray(req.body.account)
-                currentMessageThreads.push({account: req.body.account, contact: contact.name, messages: contact.messages});
-                res.send("-OK-");
+        var unreadToSend = [];
+        unreadMessages.forEach(msg => {
+            if (msg.name === req.body.account){
+                unreadToSend.push(msg.from);
             }
         });
-    })
-    .catch(e => {console.log(e); res.send("-NO-")});
-});
-
-app.post('/messagethread', (req, res) => {
-    var found = false;
-    currentMessageThreads.forEach(thread => {
-        if (thread.account === req.body.account){
-            found = true;
-            res.send(thread);
-        }
+        res.send({info: formattedContactInfo, unread: unreadToSend});
     });
 });
 
-app.post("/send-message", async (req, res) => { //< Mark callback as async
+app.post("/sendmessage", async (req, res) => { //< Mark callback as async
     try{
         const sender = req.body.sender;
         const recv = req.body.recv;
         const message = req.body.msg
+        unreadMessages.push({name: recv, from: sender});
         // Add message to sender
-        const userSender = await User.findOneAndUpdate({ //< use await pattern
+        const userSender = await User.findOneAndUpdate({
             name: sender,
             'contacts.name': recv
         },{
@@ -166,14 +136,15 @@ app.post("/send-message", async (req, res) => { //< Mark callback as async
             })
         }
         // Add message to receiver
-        const userReceiver = await User.findOneAndUpdate({ //< use await pattern
+        const userReceiver = await User.findOneAndUpdate({
             name: recv,
             'contacts.name': sender
         },{
             $push:{
                 'contacts.$.messages': { sender: "them", message: message }
             }
-        }, {new: true});
+        },
+        {new: true});
         if(!userReceiver){ //< If no receiver was found return error
             return res.status(400).json({
                 message: 'Receiver not found'
@@ -194,14 +165,29 @@ app.post("/send-message", async (req, res) => { //< Mark callback as async
 app.post("/getmessages", (req, res) => {
     var messagingUser = req.body.user;
     var requestedContact = req.body.contact;
+    var unreadToSend = [];
     User.findOne({name: messagingUser}).then(user => {
         user.contacts.forEach(contact => {
+            unreadMessages.forEach(msg => {
+                if (msg.name === messagingUser){
+                    unreadToSend.push(msg.from);
+                }
+            });
             if (contact.name == requestedContact){
-                res.send({sender: messagingUser, contact: contact.name, messages: contact.messages});
+                res.send({sender: messagingUser, contact: contact.name, messages: contact.messages, unread:unreadToSend});
             }
         })
     })
     .catch(e => {res.send("Error!"); console.log(e)});
+});
+
+app.post('/deleteunread', (req, res) => {
+    unreadMessages.forEach((msg, i, l) => {
+        if(msg.name == req.body.user && msg.from == req.body.contact){
+            l.splice(i, 1);
+        }
+    });
+    res.send("K");
 });
 
 

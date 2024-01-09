@@ -13,18 +13,19 @@ const Main  = (props) => {
     const [profilePic, setProfilePic] = React.useState("");
     const [contacts, setContacts] = React.useState([]);
     const [messages, setMessages] = React.useState({});
+    const [unread, setUnread] = React.useState([]);
     const [message, setMessage] = React.useState("");
 
     React.useEffect(() => {
         const interval = setInterval(() => {
             if (isOnContact){
-                console.log("Updating Messages.....")
                 GetMessages(messages.contact);
             }
         }, 3000);
       
-        return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-      }, [isOnContact, messages])
+        return () => clearInterval(interval);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [isOnContact, messages, unread])
 
     const UpdateFields = (e, field) => {
         if (field === "usrn"){
@@ -56,7 +57,8 @@ const Main  = (props) => {
                     });
                     axios.post(props.apiUrl + 'getcontacts/', {account: usrn})
                     .then(res => {
-                        setContacts(res.data);
+                        setContacts(res.data.info);
+                        setUnread(res.data.unread);
                     });
                 }
                 else{
@@ -75,17 +77,13 @@ const Main  = (props) => {
 
     const SendMessage = () => {
         if (message !== ""){
-            axios.post(props.apiUrl + "send-message/", {sender: usrn, recv: messages.contact, msg: message})
-            .then(res => {
-                setMessage("");
-                axios.post(props.apiUrl + "selectcontactinfo/", {account: usrn, contact: messages.contact})
+            axios.post(props.apiUrl + "deleteunread/", {user: usrn, contact: messages.contact})
+            .then((res) => {
+                axios.post(props.apiUrl + "sendmessage/", {sender: usrn, recv: messages.contact, msg: message})
                 .then(res => {
-                    if (res.data === "-NO-"){
-                        alert("Are server is having trouble sending data.")
-                    }
-                    else{
-                        GetMessages(messages.contact);
-                    }
+                    console.log(res.data);
+                    setMessage("");
+                    GetMessages(messages.contact);
                 });
             });
         }
@@ -95,17 +93,37 @@ const Main  = (props) => {
         console.log("Add Contact!");
     }
 
-    const GetMessages = (contact) => {
-        axios.post(props.apiUrl + "getmessages/", {user: usrn, contact: contact})
-        .then(res => {
-            if (res.data !== "Error!"){
-                setMessages(res.data);
-                setIsOnContact(true);
-            }
-            else{
+    const GetMessages = (contact, isPush=false) => {
+        if (isPush){
+            axios.post(props.apiUrl + "deleteunread/", {user: usrn, contact: contact})
+            .then((res) => {
                 console.log(res.data);
-            }
-        });
+                axios.post(props.apiUrl + "getmessages/", {user: usrn, contact: contact})
+                .then(res => {
+                    if (res.data !== "Error!"){
+                        setMessages(res.data);
+                        setUnread(res.data.unread);
+                        setIsOnContact(true);
+                    }
+                    else{
+                        console.log(res.data);
+                    }
+                });
+            })
+        }
+        else{
+            axios.post(props.apiUrl + "getmessages/", {user: usrn, contact: contact})
+            .then(res => {
+                if (res.data !== "Error!"){
+                    setMessages(res.data);
+                    setUnread(res.data.unread);
+                    setIsOnContact(true);
+                }
+                else{
+                    console.log(res.data);
+                }
+            });
+        }
     }
 
     if (loggedIn){
@@ -118,7 +136,7 @@ const Main  = (props) => {
                         <h4>{usrn}</h4>
                     </div>
                     {contacts.map(contact => (
-                        <Contact customClickEvent={event => GetMessages(contact.name)} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture}/>
+                        <Contact unread={unread} customClickEvent={event => GetMessages(contact.name, true)} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture}/>
                     ))}
                     <button onClick={AddContact} className="add-contact">+ Contact</button>
                 </div>
