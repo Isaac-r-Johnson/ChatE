@@ -134,11 +134,6 @@ app.get("/resetconvo", (req, res) => {
         ]).then(res.sendStatus(200));
 });
 
-app.get("/users", (req, res) => {
-    User.find().then(users => {
-        res.send(users);
-    });
-});
 
 //Post Requests
 app.post("/login", (req, res) => {
@@ -186,8 +181,8 @@ app.post('/profilepic', (req, res) => {
 
 app.post("/getcontacts", (req, res) => {
     var formattedContactInfo = [];
-    User.find({name: req.body.account}).then(user => {
-        user[0].contacts.forEach(contact => {
+    User.findOne({name: req.body.account}).then(user => {
+        user.contacts.forEach(contact => {
             formattedContactInfo.push(FormatContactInfo(contact))
         })
     }).then(() => {
@@ -274,6 +269,20 @@ app.post('/deleteunread', (req, res) => {
         }
     });
     res.send("K");
+});
+
+app.post("/users", (req, res) => {
+    User.find().then(users => {
+        console.log(req.body.contacts);
+        const userNames = []
+        users.forEach(user => {
+            if (user.name === req.body.usrn || req.body.contacts.includes(user.name)){}
+            else{
+                userNames.push({name: user.name, profilePicture: user.profilePicture});
+            }
+        });
+        res.send(userNames);
+    });
 });
 
 
