@@ -44,8 +44,94 @@ const FormatContactInfo = (contact) => {
 
 
 // Get Requests
-app.get("/create-user", (req, res) => {
-    
+app.get("/resetconvo", (req, res) => {
+    User.insertMany(
+        [
+            {
+                name: "Isaac Johnson",
+                password: "1021mki",
+                profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703376775/ChatE/Lower_Quality_iahv5e.jpg",
+                contacts: [
+                    {
+                        name: "Erica Johnson", 
+                        profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703388080/ChatE/JFAMFALL2023-23_dtx5jp.jpg", 
+                        messages:[
+                                {sender: "me", message: "Hey Mom!"}, 
+                                {sender: "me", message: "How are you?"}, 
+                                {sender: "them", message: "I'm doing well, son."}
+                            ]
+                    },
+                    {
+                        name: "Chad Johnson", 
+                        profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703549264/ChatE/PXL_20231018_184413521.PORTRAIT_tjd676.jpg", 
+                        messages:[
+                                {sender: "me", message: "Hey Father!"}, 
+                                {sender: "me", message: "How are you?"}, 
+                                {sender: "them", message: "I'm doing well bud."},
+                                {sender: "them", message: "How about you?"},
+                                {sender: "me", message: "I'm doing well, just tired."}
+                        ]
+                    }
+                ]
+            },
+            {
+                name: "Erica Johnson",
+                password: "1010",
+                profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703388080/ChatE/JFAMFALL2023-23_dtx5jp.jpg",
+                contacts: [
+                    {
+                        name: "Isaac Johnson", 
+                        profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703376775/ChatE/Lower_Quality_iahv5e.jpg", 
+                        messages:[
+                                {sender: "them", message: "Hey Mom!"}, 
+                                {sender: "them", message: "How are you?"}, 
+                                {sender: "me", message: "I'm doing well, son."}
+                            ]
+                    },
+                    {
+                        name: "Chad Johnson", 
+                        profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703549264/ChatE/PXL_20231018_184413521.PORTRAIT_tjd676.jpg", 
+                        messages:[
+                            {sender: "me", message: "Sub Bud!"}, 
+                            {sender: "them", message: "Don't call me that!"}, 
+                            {sender: "me", message: "Why?"},
+                            {sender: "them", message: "Becuase I don't like it!"},
+                            {sender: "them", message: "It makes me feel small!"}
+                        ]
+                    }
+                ]     
+            },
+            {
+                name: "Chad Johnson",
+                password: "romans",
+                profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703549264/ChatE/PXL_20231018_184413521.PORTRAIT_tjd676.jpg",
+                contacts: 
+                [
+                    {
+                        name: "Isaac Johnson", 
+                        profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703376775/ChatE/Lower_Quality_iahv5e.jpg", 
+                        messages:[
+                            {sender: "them", message: "Hey Father!"}, 
+                            {sender: "them", message: "How are you?"}, 
+                            {sender: "me", message: "I'm doing well bud."},
+                            {sender: "me", message: "How about you?"},
+                            {sender: "them", message: "I'm doing well, just tired."}
+                        ]
+                    },
+                    {
+                        name: "Erica Johnson", 
+                        profilePicture: "https://res.cloudinary.com/dqaxkucbu/image/upload/v1703388080/ChatE/JFAMFALL2023-23_dtx5jp.jpg", 
+                        messages:[
+                            {sender: "them", message: "Sub Bud!"}, 
+                            {sender: "me", message: "Don't call me that!"}, 
+                            {sender: "them", message: "Why?"},
+                            {sender: "me", message: "Becuase I don't like it!"},
+                            {sender: "me", message: "It makes me feel small!"}
+                        ]
+                    }
+                ]   
+            }
+        ]).then(res.sendStatus(200));
 });
 
 app.get("/users", (req, res) => {

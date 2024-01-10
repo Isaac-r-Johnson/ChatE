@@ -1,18 +1,19 @@
 import React from 'react';
+import useSound from 'use-sound'
+import notificationSound from './notification.wav';
 
 const Contact = (props) => {
-    console.log(props.unread)
-    var Unread = false;
+    var unread = false;
     props.unread.forEach(name => {
         if (name === props.contact){
-            Unread = true;
+            unread = true;
         }
     });
     return (
             <div className="contact" onClick={props.customClickEvent}>
                 <img src={props.image} alt='Profile'/>
                 <h6>{props.contact}</h6>
-                {Unread ? (
+                {unread ? (
                     <div className='unread'></div>
                 ):(null)}
             </div>

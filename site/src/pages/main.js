@@ -3,13 +3,15 @@ import axios from "axios";
 import Contact from "../components/Contact";
 import Message from "../components/Message";
 import ScrollToBottom from 'react-scroll-to-bottom';
+import useSound from 'use-sound'
+import notificationSound from '../components/notification.wav';
 
 const Main  = (props) => {
-
+    const [playSound] = useSound(notificationSound);
     const [loggedIn, setLoggedIn] = React.useState(false);
     const [isOnContact, setIsOnContact] = React.useState(false);
-    const [usrn, setUsrn] = React.useState("");
-    const [pass, setPass] = React.useState("");
+    const [usrn, setUsrn] = React.useState("Isaac Johnson");
+    const [pass, setPass] = React.useState("1021mki");
     const [profilePic, setProfilePic] = React.useState("");
     const [contacts, setContacts] = React.useState([]);
     const [messages, setMessages] = React.useState({});
@@ -102,6 +104,9 @@ const Main  = (props) => {
                 .then(res => {
                     if (res.data !== "Error!"){
                         setMessages(res.data);
+                        if (res.data.unread.length > unread.length){
+                            playSound();
+                        }
                         setUnread(res.data.unread);
                         setIsOnContact(true);
                     }
@@ -116,6 +121,9 @@ const Main  = (props) => {
             .then(res => {
                 if (res.data !== "Error!"){
                     setMessages(res.data);
+                    if (res.data.unread.length > unread.length){
+                        playSound();
+                    }
                     setUnread(res.data.unread);
                     setIsOnContact(true);
                 }
