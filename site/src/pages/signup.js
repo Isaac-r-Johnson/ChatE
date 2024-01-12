@@ -24,7 +24,7 @@ const Signup  = (props) => {
             axios.post(props.apiUrl + "signup/", {usrn: usrn, pass: pass, pic: pic})
             .then(res => {
                 if (res.data === "OK"){
-                    window.location.href = props.siteUrl + "/";
+                    window.location.href = props.siteUrl;
                 }
                 else{
                     alert("Error!");

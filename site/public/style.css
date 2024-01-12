@@ -228,6 +228,22 @@ hr{
     background: linear-gradient(90deg, rgb(0, 0, 3) 0%, rgb(44, 52, 129) 0%, rgb(0, 196, 235) 100%);
 }
 
+.popup{
+    width: 400px;
+    height: 425px;
+    background-color: #000000e0;
+    border-radius: 2px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.popup > h2{
+    color: white;
+    align-self: center;
+    margin-top: 5px;
+}
+
 /* Messages */
 .message-ui{
     width: 100%;

@@ -273,7 +273,6 @@ app.post('/deleteunread', (req, res) => {
 
 app.post("/users", (req, res) => {
     User.find().then(users => {
-        console.log(req.body.contacts);
         const userNames = []
         users.forEach(user => {
             if (user.name === req.body.usrn || req.body.contacts.includes(user.name)){}
@@ -285,8 +284,37 @@ app.post("/users", (req, res) => {
     });
 });
 
+app.post("/addcontact", async (req, res) => {
+    try{
+        const adder = req.body.adder;
+        const added = req.body.added;
+        const thePersonToBeAdded1 = await User.findOne({name: added});
+        const anAdder = await User.findOneAndUpdate({
+             name: adder
+         },{
+             $push:{
+                 contacts: { name: thePersonToBeAdded1.name, profilePicture: thePersonToBeAdded1.profilePicture, messages: []}   
+             }
+         }, {new: true});
+        const thePersonToBeAdded2 = await User.findOne({name: adder});
+        const anAdded = User.findOneAndUpdate({
+            name: added
+        },{
+            $push:{
+                contacts: { name: thePersonToBeAdded2.name, profilePicture: thePersonToBeAdded2.profilePicture, messages: []}   
+            }
+        }, {new: true})
+        .then(() => {if (anAdded && anAdder) res.send("OK")});
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({
+            message: 'Error on server.'
+        });
+    }
+});
+
 
 app.listen(process.env.PORT, () => {
     console.log("ChatE server is running on port " + process.env.PORT + "...");
-})
+});
 

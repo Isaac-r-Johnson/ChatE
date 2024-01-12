@@ -1,6 +1,4 @@
 import React from 'react';
-import useSound from 'use-sound'
-import notificationSound from './notification.wav';
 
 const Contact = (props) => {
     var unread = false;
@@ -20,4 +18,4 @@ const Contact = (props) => {
     );
 }
 
-export default Contact
+export default Contact;
