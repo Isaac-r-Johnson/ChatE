@@ -97,14 +97,27 @@ const Main  = (props) => {
         });
     }
 
+    const PlaceOnTop = (contactName) => {
+        var tempContact = {};
+        var tempContactArray = contacts;
+        tempContactArray.forEach((contact, index, array) => {
+            if (contact.name === contactName){
+                tempContact = contact;
+                tempContactArray.splice(index, 1);
+                tempContactArray.push(tempContact);
+                setContacts(tempContactArray);
+            }
+        });
+    }
+
     const SendMessage = () => {
         if (message !== ""){
             axios.post(props.apiUrl + "deleteunread/", {user: usrn, contact: messages.contact})
             .then((res) => {
                 axios.post(props.apiUrl + "sendmessage/", {sender: usrn, recv: messages.contact, msg: message})
                 .then(res => {
-                    console.log(res.data);
                     setMessage("");
+                    PlaceOnTop(messages.contact);
                     GetMessages(messages.contact);
                 });
             });
@@ -115,7 +128,6 @@ const Main  = (props) => {
         if (isPush){
             axios.post(props.apiUrl + "deleteunread/", {user: usrn, contact: contact})
             .then((res) => {
-                console.log(res.data);
                 axios.post(props.apiUrl + "getmessages/", {user: usrn, contact: contact})
                 .then(res => {
                     if (res.data !== "Error!"){
@@ -124,6 +136,9 @@ const Main  = (props) => {
                             playSound();
                         }
                         setUnread(res.data.unread);
+                        res.data.unread.forEach(obj => {
+                            PlaceOnTop(obj);
+                        })
                         setIsOnContact(true);
                     }
                     else{
@@ -141,6 +156,9 @@ const Main  = (props) => {
                         playSound();
                     }
                     setUnread(res.data.unread);
+                    res.data.unread.forEach(obj => {
+                        PlaceOnTop(obj);
+                    })
                     setIsOnContact(true);
                 }
                 else{
@@ -161,7 +179,6 @@ const Main  = (props) => {
     }
 
     const AddContact = (contactName) => {
-        console.log("Add " + contactName + " to contacts!");
         axios.post(props.apiUrl + "addcontact/", {adder: usrn, added: contactName})
         .then(res => {
             if (res.data === "OK"){
@@ -182,9 +199,11 @@ const Main  = (props) => {
                         <img src={profilePic} alt='Profile'/>
                         <h4>{usrn}</h4>
                     </div>
-                    {contacts.map(contact => (
+                    <div className="contacts">
+                    {contacts.slice(0).reverse().map(contact => (
                         <Contact key={contact.name} unread={unread} customClickEvent={event => GetMessages(contact.name, true)} apiUrl={props.apiUrl} account={usrn} contact={contact.name} image={contact.profilePicture}/>
                     ))}
+                    </div>
                     <Popup trigger=
                         {<button className="add-contact">+ Contact</button>}
                         modal nested>
